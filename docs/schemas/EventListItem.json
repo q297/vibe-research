@@ -36,6 +36,8 @@
         "taxes",
         "logistics",
         "labor_market",
+        "economic_growth",
+        "real_estate",
         "other"
       ],
       "title": "SensitivityTag",

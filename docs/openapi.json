@@ -2272,6 +2272,42 @@
         ],
         "title": "Action"
       },
+      "Affiliate": {
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "title": "Client Id"
+          },
+          "link": {
+            "type": "string",
+            "title": "Link",
+            "description": "group or person"
+          },
+          "shared_persons": {
+            "type": "integer",
+            "title": "Shared Persons",
+            "default": 0
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "client_id",
+          "link"
+        ],
+        "title": "Affiliate"
+      },
       "AgentTrace": {
         "properties": {
           "trace_id": {
@@ -2782,6 +2818,18 @@
             ],
             "title": "Okved Name"
           },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector",
+            "description": "Enlarged sector derived from OKVED"
+          },
           "region": {
             "anyOf": [
               {
@@ -2823,7 +2871,20 @@
                 "type": "null"
               }
             ],
-            "title": "Company Age Years"
+            "title": "Company Age Years",
+            "description": "Midpoint of the gradation"
+          },
+          "company_age_gradation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Age Gradation",
+            "description": "Raw value from CSV"
           },
           "employees": {
             "anyOf": [
@@ -2834,7 +2895,66 @@
                 "type": "null"
               }
             ],
-            "title": "Employees"
+            "title": "Employees",
+            "description": "Midpoint of the gradation"
+          },
+          "employees_gradation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employees Gradation"
+          },
+          "org_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Org Type"
+          },
+          "ownership_form": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ownership Form",
+            "description": "OKFS_NAME"
+          },
+          "business_stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Stage",
+            "description": "ECO_MARK_LABEL"
+          },
+          "key_owner_mark": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Owner Mark",
+            "description": "NEGATIVEMARK"
           },
           "group_id": {
             "anyOf": [
@@ -2891,6 +3011,30 @@
             },
             "type": "array",
             "title": "Top Counterparties"
+          },
+          "counterparty_concentration": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Counterparty Concentration",
+            "description": "HHI of payment volume over all counterparties"
+          },
+          "affiliates": {
+            "items": {
+              "$ref": "#/components/schemas/Affiliate"
+            },
+            "type": "array",
+            "title": "Affiliates"
+          },
+          "data_quality": {
+            "$ref": "#/components/schemas/DataQuality"
           }
         },
         "additionalProperties": false,
@@ -2933,6 +3077,18 @@
               }
             ],
             "title": "Okved Name"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector",
+            "description": "Enlarged sector derived from OKVED"
           },
           "region": {
             "anyOf": [
@@ -3011,6 +3167,17 @@
             ],
             "title": "Okved Name"
           },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector"
+          },
           "role": {
             "type": "string",
             "title": "Role",
@@ -3029,6 +3196,25 @@
             ],
             "title": "Share",
             "description": "Share of payment volume"
+          },
+          "payments_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payments Count"
+          },
+          "tags": {
+            "items": {
+              "$ref": "#/components/schemas/SensitivityTag"
+            },
+            "type": "array",
+            "title": "Tags",
+            "description": "Sector tags of the counterparty, for 2nd-order impact"
           }
         },
         "additionalProperties": false,
@@ -3038,6 +3224,35 @@
           "role"
         ],
         "title": "Counterparty"
+      },
+      "DataQuality": {
+        "properties": {
+          "missing_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing Fields"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          },
+          "completeness": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Completeness",
+            "description": "Share of key fields known",
+            "default": 1.0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "DataQuality"
       },
       "DebtLoad": {
         "type": "string",
@@ -3430,6 +3645,15 @@
         ],
         "title": "EventOrigin"
       },
+      "ExposureDirection": {
+        "type": "string",
+        "enum": [
+          "risk",
+          "opportunity",
+          "mixed"
+        ],
+        "title": "ExposureDirection"
+      },
       "FeedItem": {
         "properties": {
           "event": {
@@ -3625,7 +3849,16 @@
               "type": "string"
             },
             "type": "array",
-            "title": "Countries"
+            "title": "Countries",
+            "description": "ISO 3166-1 alpha-2 (D4)"
+          },
+          "country_names": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Country Names",
+            "description": "As written in FTS data"
           }
         },
         "additionalProperties": false,
@@ -4149,6 +4382,18 @@
                 "type": "null"
               }
             ]
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight",
+            "description": "Contribution to the score before freshness and importance"
           }
         },
         "additionalProperties": false,
@@ -4198,6 +4443,24 @@
             "type": "string",
             "title": "Reason",
             "description": "Human readable, shown in the 'why relevant' chips"
+          },
+          "direction": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExposureDirection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidence",
+            "description": "Profile feature keys that produced the tag, e.g. 'products.credit' (crit. 12)"
           }
         },
         "additionalProperties": false,
@@ -4228,6 +4491,8 @@
           "taxes",
           "logistics",
           "labor_market",
+          "economic_growth",
+          "real_estate",
           "other"
         ],
         "title": "SensitivityTag"

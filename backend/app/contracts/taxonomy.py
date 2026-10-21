@@ -25,6 +25,8 @@ class SensitivityTag(StrEnum):
     TAXES = "taxes"
     LOGISTICS = "logistics"
     LABOR_MARKET = "labor_market"
+    ECONOMIC_GROWTH = "economic_growth"
+    REAL_ESTATE = "real_estate"
     OTHER = "other"
 
 
@@ -45,5 +47,7 @@ TAG_LABELS_RU: dict[SensitivityTag, str] = {
     SensitivityTag.TAXES: "Налоги",
     SensitivityTag.LOGISTICS: "Логистика",
     SensitivityTag.LABOR_MARKET: "Рынок труда",
+    SensitivityTag.ECONOMIC_GROWTH: "Экономический рост",
+    SensitivityTag.REAL_ESTATE: "Недвижимость и стройка",
     SensitivityTag.OTHER: "Прочее",
 }

@@ -1,5 +1,42 @@
 {
   "$defs": {
+    "Affiliate": {
+      "additionalProperties": false,
+      "properties": {
+        "client_id": {
+          "title": "Client Id",
+          "type": "string"
+        },
+        "link": {
+          "description": "group or person",
+          "title": "Link",
+          "type": "string"
+        },
+        "shared_persons": {
+          "default": 0,
+          "title": "Shared Persons",
+          "type": "integer"
+        },
+        "sector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sector"
+        }
+      },
+      "required": [
+        "client_id",
+        "link"
+      ],
+      "title": "Affiliate",
+      "type": "object"
+    },
     "ClientType": {
       "enum": [
         "active",
@@ -39,6 +76,18 @@
           "default": null,
           "title": "Okved Name"
         },
+        "sector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sector"
+        },
         "role": {
           "description": "supplier or buyer",
           "title": "Role",
@@ -58,6 +107,26 @@
           "default": null,
           "description": "Share of payment volume",
           "title": "Share"
+        },
+        "payments_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payments Count"
+        },
+        "tags": {
+          "description": "Sector tags of the counterparty, for 2nd-order impact",
+          "items": {
+            "$ref": "#/$defs/SensitivityTag"
+          },
+          "title": "Tags",
+          "type": "array"
         }
       },
       "required": [
@@ -65,6 +134,35 @@
         "role"
       ],
       "title": "Counterparty",
+      "type": "object"
+    },
+    "DataQuality": {
+      "additionalProperties": false,
+      "properties": {
+        "missing_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Fields",
+          "type": "array"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "completeness": {
+          "default": 1.0,
+          "description": "Share of key fields known",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Completeness",
+          "type": "number"
+        }
+      },
+      "title": "DataQuality",
       "type": "object"
     },
     "DebtLoad": {
@@ -75,6 +173,15 @@
         "high"
       ],
       "title": "DebtLoad",
+      "type": "string"
+    },
+    "ExposureDirection": {
+      "enum": [
+        "risk",
+        "opportunity",
+        "mixed"
+      ],
+      "title": "ExposureDirection",
       "type": "string"
     },
     "ForeignTrade": {
@@ -94,10 +201,19 @@
           "title": "Has Fea"
         },
         "countries": {
+          "description": "ISO 3166-1 alpha-2 (D4)",
           "items": {
             "type": "string"
           },
           "title": "Countries",
+          "type": "array"
+        },
+        "country_names": {
+          "description": "As written in FTS data",
+          "items": {
+            "type": "string"
+          },
+          "title": "Country Names",
           "type": "array"
         }
       },
@@ -133,6 +249,25 @@
           "description": "Human readable, shown in the 'why relevant' chips",
           "title": "Reason",
           "type": "string"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExposureDirection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence": {
+          "description": "Profile feature keys that produced the tag, e.g. 'products.credit' (crit. 12)",
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
         }
       },
       "required": [
@@ -161,6 +296,8 @@
         "taxes",
         "logistics",
         "labor_market",
+        "economic_growth",
+        "real_estate",
         "other"
       ],
       "title": "SensitivityTag",
@@ -201,6 +338,19 @@
       ],
       "default": null,
       "title": "Okved Name"
+    },
+    "sector": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Enlarged sector derived from OKVED",
+      "title": "Sector"
     },
     "region": {
       "anyOf": [
@@ -247,7 +397,21 @@
         }
       ],
       "default": null,
+      "description": "Midpoint of the gradation",
       "title": "Company Age Years"
+    },
+    "company_age_gradation": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Raw value from CSV",
+      "title": "Company Age Gradation"
     },
     "employees": {
       "anyOf": [
@@ -259,7 +423,71 @@
         }
       ],
       "default": null,
+      "description": "Midpoint of the gradation",
       "title": "Employees"
+    },
+    "employees_gradation": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Employees Gradation"
+    },
+    "org_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Org Type"
+    },
+    "ownership_form": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "OKFS_NAME",
+      "title": "Ownership Form"
+    },
+    "business_stage": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "ECO_MARK_LABEL",
+      "title": "Business Stage"
+    },
+    "key_owner_mark": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "NEGATIVEMARK",
+      "title": "Key Owner Mark"
     },
     "group_id": {
       "anyOf": [
@@ -319,6 +547,31 @@
       },
       "title": "Top Counterparties",
       "type": "array"
+    },
+    "counterparty_concentration": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "HHI of payment volume over all counterparties",
+      "title": "Counterparty Concentration"
+    },
+    "affiliates": {
+      "items": {
+        "$ref": "#/$defs/Affiliate"
+      },
+      "title": "Affiliates",
+      "type": "array"
+    },
+    "data_quality": {
+      "$ref": "#/$defs/DataQuality"
     }
   },
   "required": [

@@ -33,9 +33,20 @@ def get_services() -> Services:
     news = StubNews()
     agent = StubAgent(news, step_delay_s=settings.stub_step_delay_s)
     store = Store()
+    profiles: ProfilePort
+    if settings.profiles_data_dir:
+        from app.profiling.service import CsvProfiles
+
+        profiles = CsvProfiles(
+            settings.profiles_data_dir,
+            revenue_multiplier=settings.profiles_revenue_multiplier,
+            pinned=settings.profiles_pinned,
+        )
+    else:
+        profiles = StubProfiles()
     return Services(
         news=news,
-        profiles=StubProfiles(),
+        profiles=profiles,
         agent=agent,
         store=store,
         jobs=JobManager(agent, store),

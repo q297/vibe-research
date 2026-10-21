@@ -33,6 +33,11 @@ class Settings(BaseSettings):
 
     database_url: str | None = None
 
+    # Client CSV folder; empty means stub profiles
+    profiles_data_dir: str | None = None
+    profiles_revenue_multiplier: float | None = None
+    profiles_pinned: list[str] = []
+
     @field_validator("jwt_secret")
     @classmethod
     def _secret_or_random(cls, value: str) -> str:

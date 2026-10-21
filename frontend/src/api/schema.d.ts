@@ -332,6 +332,23 @@ export interface components {
              */
             product_hint?: string | null;
         };
+        /** Affiliate */
+        Affiliate: {
+            /** Client Id */
+            client_id: string;
+            /**
+             * Link
+             * @description group or person
+             */
+            link: string;
+            /**
+             * Shared Persons
+             * @default 0
+             */
+            shared_persons: number;
+            /** Sector */
+            sector?: string | null;
+        };
         /** AgentTrace */
         AgentTrace: {
             /** Trace Id */
@@ -513,15 +530,50 @@ export interface components {
             okved_code?: string | null;
             /** Okved Name */
             okved_name?: string | null;
+            /**
+             * Sector
+             * @description Enlarged sector derived from OKVED
+             */
+            sector?: string | null;
             /** Region */
             region?: string | null;
             /** Revenue Bn Rub */
             revenue_bn_rub?: number | null;
             client_type?: components["schemas"]["ClientType"] | null;
-            /** Company Age Years */
+            /**
+             * Company Age Years
+             * @description Midpoint of the gradation
+             */
             company_age_years?: number | null;
-            /** Employees */
+            /**
+             * Company Age Gradation
+             * @description Raw value from CSV
+             */
+            company_age_gradation?: string | null;
+            /**
+             * Employees
+             * @description Midpoint of the gradation
+             */
             employees?: number | null;
+            /** Employees Gradation */
+            employees_gradation?: string | null;
+            /** Org Type */
+            org_type?: string | null;
+            /**
+             * Ownership Form
+             * @description OKFS_NAME
+             */
+            ownership_form?: string | null;
+            /**
+             * Business Stage
+             * @description ECO_MARK_LABEL
+             */
+            business_stage?: string | null;
+            /**
+             * Key Owner Mark
+             * @description NEGATIVEMARK
+             */
+            key_owner_mark?: boolean | null;
             /** Group Id */
             group_id?: string | null;
             /** City */
@@ -534,6 +586,14 @@ export interface components {
             sensitivities?: components["schemas"]["Sensitivity"][];
             /** Top Counterparties */
             top_counterparties?: components["schemas"]["Counterparty"][];
+            /**
+             * Counterparty Concentration
+             * @description HHI of payment volume over all counterparties
+             */
+            counterparty_concentration?: number | null;
+            /** Affiliates */
+            affiliates?: components["schemas"]["Affiliate"][];
+            data_quality?: components["schemas"]["DataQuality"];
         };
         /** ClientSummary */
         ClientSummary: {
@@ -548,6 +608,11 @@ export interface components {
             okved_code?: string | null;
             /** Okved Name */
             okved_name?: string | null;
+            /**
+             * Sector
+             * @description Enlarged sector derived from OKVED
+             */
+            sector?: string | null;
             /** Region */
             region?: string | null;
             /** Revenue Bn Rub */
@@ -567,6 +632,8 @@ export interface components {
             okved_code?: string | null;
             /** Okved Name */
             okved_name?: string | null;
+            /** Sector */
+            sector?: string | null;
             /**
              * Role
              * @description supplier or buyer
@@ -577,6 +644,26 @@ export interface components {
              * @description Share of payment volume
              */
             share?: number | null;
+            /** Payments Count */
+            payments_count?: number | null;
+            /**
+             * Tags
+             * @description Sector tags of the counterparty, for 2nd-order impact
+             */
+            tags?: components["schemas"]["SensitivityTag"][];
+        };
+        /** DataQuality */
+        DataQuality: {
+            /** Missing Fields */
+            missing_fields?: string[];
+            /** Notes */
+            notes?: string[];
+            /**
+             * Completeness
+             * @description Share of key fields known
+             * @default 1
+             */
+            completeness: number;
         };
         /**
          * DebtLoad
@@ -770,6 +857,11 @@ export interface components {
          * @enum {string}
          */
         EventOrigin: "feed" | "user_input" | "synthetic";
+        /**
+         * ExposureDirection
+         * @enum {string}
+         */
+        ExposureDirection: "risk" | "opportunity" | "mixed";
         /** FeedItem */
         FeedItem: {
             event: components["schemas"]["EventListItem"];
@@ -828,8 +920,16 @@ export interface components {
              * @description None means unknown, not 'no' (D8)
              */
             has_fea?: boolean | null;
-            /** Countries */
+            /**
+             * Countries
+             * @description ISO 3166-1 alpha-2 (D4)
+             */
             countries?: string[];
+            /**
+             * Country Names
+             * @description As written in FTS data
+             */
+            country_names?: string[];
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1021,6 +1121,11 @@ export interface components {
             /** Label */
             label: string;
             tag?: components["schemas"]["SensitivityTag"] | null;
+            /**
+             * Weight
+             * @description Contribution to the score before freshness and importance
+             */
+            weight?: number | null;
         };
         /** RunInsightRequest */
         RunInsightRequest: {
@@ -1043,12 +1148,18 @@ export interface components {
              * @description Human readable, shown in the 'why relevant' chips
              */
             reason: string;
+            direction?: components["schemas"]["ExposureDirection"] | null;
+            /**
+             * Evidence
+             * @description Profile feature keys that produced the tag, e.g. 'products.credit' (crit. 12)
+             */
+            evidence?: string[];
         };
         /**
          * SensitivityTag
          * @enum {string}
          */
-        SensitivityTag: "key_rate" | "fx_rate" | "inflation" | "consumer_demand" | "commodities_energy" | "commodities_metals" | "commodities_agri" | "gold" | "credit_market" | "bond_market" | "export_import" | "sanctions" | "regulation" | "taxes" | "logistics" | "labor_market" | "other";
+        SensitivityTag: "key_rate" | "fx_rate" | "inflation" | "consumer_demand" | "commodities_energy" | "commodities_metals" | "commodities_agri" | "gold" | "credit_market" | "bond_market" | "export_import" | "sanctions" | "regulation" | "taxes" | "logistics" | "labor_market" | "economic_growth" | "real_estate" | "other";
         /**
          * StepKind
          * @enum {string}

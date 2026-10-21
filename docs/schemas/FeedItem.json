@@ -215,6 +215,19 @@
             }
           ],
           "default": null
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contribution to the score before freshness and importance",
+          "title": "Weight"
         }
       },
       "required": [
@@ -242,6 +255,8 @@
         "taxes",
         "logistics",
         "labor_market",
+        "economic_growth",
+        "real_estate",
         "other"
       ],
       "title": "SensitivityTag",

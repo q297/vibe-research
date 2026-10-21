@@ -1,0 +1,163 @@
+[
+  {
+    "event_id": "ev-001",
+    "title": "ЦБ сохранил ключевую ставку на уровне 14%",
+    "summary": "Регулятор оставил ставку без изменений и сохранил сигнал о длительном периоде жёсткой политики",
+    "event_type": "monetary_policy",
+    "tags": ["key_rate", "credit_market", "inflation"],
+    "keywords": ["ключевая ставка", "ЦБ"],
+    "okved_sections": ["*"],
+    "countries": ["RU"],
+    "regions": [],
+    "importance": 0.95,
+    "published_at": "2026-10-17T10:30:00Z",
+    "ingested_at": "2026-10-17T10:40:00Z",
+    "updated_at": "2026-10-17T10:40:00Z",
+    "origin": "synthetic",
+    "entities": [{"name": "Банк России", "kind": "regulator"}],
+    "articles": [
+      {"article_id": "a-0001", "title": "ЦБ сохранил ключевую ставку на уровне 14%", "source_name": "Синтетическая новость (фикстура)", "url": null, "published_at": "2026-10-17T10:30:00Z", "snippet": "Совет директоров принял решение сохранить ключевую ставку"}
+    ]
+  },
+  {
+    "event_id": "ev-002",
+    "title": "Рубль укрепился к юаню на фоне продаж экспортной выручки",
+    "summary": "Курс юаня снизился на неделе, участники рынка связывают это с налоговым периодом",
+    "event_type": "fx",
+    "tags": ["fx_rate", "export_import"],
+    "keywords": ["курс", "юань", "экспортёры"],
+    "okved_sections": ["*"],
+    "countries": ["RU", "CN"],
+    "regions": [],
+    "importance": 0.7,
+    "published_at": "2026-10-18T08:00:00Z",
+    "ingested_at": "2026-10-18T08:15:00Z",
+    "updated_at": "2026-10-18T08:15:00Z",
+    "origin": "synthetic",
+    "entities": [],
+    "articles": [
+      {"article_id": "a-0002", "title": "Рубль укрепился к юаню", "source_name": "Синтетическая новость (фикстура)", "url": null, "published_at": "2026-10-18T08:00:00Z", "snippet": null}
+    ]
+  },
+  {
+    "event_id": "ev-003",
+    "title": "Цены на сталь снижаются из-за слабого спроса в Китае",
+    "summary": "Котировки стального проката снижаются третью неделю подряд",
+    "event_type": "commodities",
+    "tags": ["commodities_metals", "export_import"],
+    "keywords": ["сталь", "Китай"],
+    "okved_sections": ["24"],
+    "countries": ["CN"],
+    "regions": [],
+    "importance": 0.6,
+    "published_at": "2026-10-16T12:00:00Z",
+    "ingested_at": "2026-10-16T12:20:00Z",
+    "updated_at": "2026-10-19T09:00:00Z",
+    "version": 2,
+    "origin": "synthetic",
+    "entities": [{"name": "Китай", "kind": "country"}, {"name": "сталь", "kind": "commodity"}],
+    "articles": [
+      {"article_id": "a-0003", "title": "Сталь дешевеет третью неделю", "source_name": "Синтетическая новость (фикстура)", "url": null, "published_at": "2026-10-16T12:00:00Z", "snippet": null},
+      {"article_id": "a-0004", "title": "Спрос на прокат в Китае остаётся слабым", "source_name": "Синтетическая новость (фикстура)", "url": null, "published_at": "2026-10-19T09:00:00Z", "snippet": null}
+    ]
+  },
+  {
+    "event_id": "ev-004",
+    "title": "Рост розничных продаж замедлился",
+    "summary": "Оборот розницы растёт медленнее, домохозяйства переносят сбережения на депозиты",
+    "event_type": "macro",
+    "tags": ["consumer_demand", "key_rate"],
+    "keywords": ["розница", "потребление"],
+    "okved_sections": ["47"],
+    "countries": ["RU"],
+    "regions": [],
+    "importance": 0.65,
+    "published_at": "2026-10-15T07:00:00Z",
+    "ingested_at": "2026-10-15T07:30:00Z",
+    "updated_at": "2026-10-15T07:30:00Z",
+    "origin": "synthetic",
+    "entities": [],
+    "articles": [
+      {"article_id": "a-0005", "title": "Потребление замедляется", "source_name": "Синтетическая новость (фикстура)", "url": null, "published_at": "2026-10-15T07:00:00Z", "snippet": null}
+    ]
+  },
+  {
+    "event_id": "ev-005",
+    "title": "Годовая инфляция замедлилась",
+    "summary": "Недельные данные показывают замедление роста цен, особенно на продовольствие",
+    "event_type": "macro",
+    "tags": ["inflation", "key_rate", "consumer_demand"],
+    "keywords": ["инфляция", "цены"],
+    "okved_sections": ["*"],
+    "countries": ["RU"],
+    "regions": [],
+    "importance": 0.7,
+    "published_at": "2026-10-14T16:00:00Z",
+    "ingested_at": "2026-10-14T16:10:00Z",
+    "updated_at": "2026-10-14T16:10:00Z",
+    "origin": "synthetic",
+    "entities": [],
+    "articles": [
+      {"article_id": "a-0006", "title": "Инфляция замедлилась", "source_name": "Синтетическая новость (фикстура)", "url": null, "published_at": "2026-10-14T16:00:00Z", "snippet": null}
+    ]
+  },
+  {
+    "event_id": "ev-006",
+    "title": "Расширяется обязательная маркировка продуктов питания",
+    "summary": "С нового года маркировка распространится на дополнительные товарные группы",
+    "event_type": "regulation",
+    "tags": ["regulation"],
+    "keywords": ["маркировка", "Честный знак"],
+    "okved_sections": ["47", "10"],
+    "countries": ["RU"],
+    "regions": [],
+    "importance": 0.5,
+    "published_at": "2026-10-13T09:00:00Z",
+    "ingested_at": "2026-10-13T09:30:00Z",
+    "updated_at": "2026-10-13T09:30:00Z",
+    "origin": "synthetic",
+    "entities": [],
+    "articles": [
+      {"article_id": "a-0007", "title": "Маркировка расширяется", "source_name": "Синтетическая новость (фикстура)", "url": null, "published_at": "2026-10-13T09:00:00Z", "snippet": null}
+    ]
+  },
+  {
+    "event_id": "ev-007",
+    "title": "Изменена экспортная пошлина на пшеницу",
+    "summary": "Формула расчёта плавающей пошлины на зерно скорректирована",
+    "event_type": "regulation",
+    "tags": ["commodities_agri", "export_import", "regulation", "taxes"],
+    "keywords": ["пшеница", "пошлина", "экспорт"],
+    "okved_sections": ["01"],
+    "countries": ["RU", "EG"],
+    "regions": ["Краснодарский край"],
+    "importance": 0.6,
+    "published_at": "2026-10-19T11:00:00Z",
+    "ingested_at": "2026-10-19T11:20:00Z",
+    "updated_at": "2026-10-19T11:20:00Z",
+    "origin": "synthetic",
+    "entities": [{"name": "пшеница", "kind": "commodity"}],
+    "articles": [
+      {"article_id": "a-0008", "title": "Пошлина на пшеницу", "source_name": "Синтетическая новость (фикстура)", "url": null, "published_at": "2026-10-19T11:00:00Z", "snippet": null}
+    ]
+  },
+  {
+    "event_id": "ev-008",
+    "title": "Новость без классификации",
+    "summary": null,
+    "event_type": null,
+    "tags": [],
+    "keywords": [],
+    "okved_sections": [],
+    "countries": [],
+    "regions": [],
+    "importance": null,
+    "published_at": null,
+    "ingested_at": "2026-10-20T10:00:00Z",
+    "updated_at": "2026-10-20T10:00:00Z",
+    "classification_status": "unclassified",
+    "origin": "synthetic",
+    "entities": [],
+    "articles": []
+  }
+]

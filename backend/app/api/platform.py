@@ -1,0 +1,59 @@
+from fastapi import APIRouter
+
+from app.api.deps import Cfg, Svc
+from app.auth import CurrentUser, authenticate, issue_token
+from app.contracts.common import ErrorCode
+from app.contracts.platform import Budget, Health, LoginRequest, Me, Metrics, Token
+from app.errors import AppError
+
+router = APIRouter(tags=["platform"])
+
+
+@router.get("/health", response_model=Health)
+async def health(settings: Cfg) -> Health:
+    return Health(
+        status="ok",
+        mock_mode=settings.mock_mode,
+        offline_mode=settings.offline_mode,
+        version=settings.app_version,
+    )
+
+
+@router.post("/auth/login", response_model=Token)
+async def login(body: LoginRequest, settings: Cfg) -> Token:
+    user = authenticate(body.username, body.password)
+    if user is None:
+        raise AppError(401, ErrorCode.UNAUTHORIZED, "Wrong username or password")
+    return Token(access_token=issue_token(user, settings))
+
+
+@router.get("/me", response_model=Me)
+async def me(user: CurrentUser) -> Me:
+    return user.to_me()
+
+
+@router.get("/metrics", response_model=Metrics)
+async def metrics(user: CurrentUser, svc: Svc) -> Metrics:
+    store = svc.store
+    traces = [t for t in store.traces.values() if t.insight_id]
+    durations = store.job_durations_ms
+    return Metrics(
+        insights_total=len(store.insights),
+        feedback_up=sum(f.rating == "up" for f in store.feedback),
+        feedback_down=sum(f.rating == "down" for f in store.feedback),
+        self_corrections=sum(t.retries > 0 for t in traces),
+        avg_tokens_per_insight=sum(t.total_tokens for t in traces) / len(traces)
+        if traces
+        else None,
+        avg_latency_ms=sum(durations) / len(durations) if durations else None,
+    )
+
+
+@router.get("/budget", response_model=Budget)
+async def budget(user: CurrentUser, svc: Svc, settings: Cfg) -> Budget:
+    # Real counter comes from the agent's token log (I1, I3)
+    used = sum(t.total_tokens for t in svc.store.traces.values())
+    limit = settings.daily_token_limit
+    return Budget(
+        tokens_used_today=used, tokens_limit_today=limit, exhausted=bool(limit and used >= limit)
+    )

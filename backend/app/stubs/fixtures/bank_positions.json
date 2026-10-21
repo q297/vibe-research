@@ -1,0 +1,37 @@
+[
+  {
+    "position_id": "bp-key-rate",
+    "topic": "key_rate",
+    "indicator": "Ключевая ставка",
+    "value": null,
+    "unit": "%",
+    "horizon": null,
+    "direction": "unknown",
+    "statement": "[Заглушка] Позиция ЦМИ по ключевой ставке появится после индексации PDF",
+    "citation": {"kind": "bank_doc", "source_id": "stub-cmi-key-rate", "title": "ЦМИ: ключевая ставка (заглушка)", "page": null}
+  },
+  {
+    "position_id": "bp-inflation",
+    "topic": "inflation",
+    "indicator": "Инфляция",
+    "direction": "unknown",
+    "statement": "[Заглушка] Позиция ЦМИ по инфляции появится после индексации PDF",
+    "citation": {"kind": "bank_doc", "source_id": "stub-cmi-inflation", "title": "ЦМИ: инфляция (заглушка)", "page": null}
+  },
+  {
+    "position_id": "bp-commodities",
+    "topic": "commodities_metals",
+    "indicator": "Сырьевые рынки",
+    "direction": "unknown",
+    "statement": "[Заглушка] Позиция ЦМИ по сырьевым рынкам появится после индексации PDF",
+    "citation": {"kind": "bank_doc", "source_id": "stub-cmi-commodities", "title": "ЦМИ: Commodities (заглушка)", "page": null}
+  },
+  {
+    "position_id": "bp-consumption",
+    "topic": "consumer_demand",
+    "indicator": "Потребление",
+    "direction": "unknown",
+    "statement": "[Заглушка] Позиция ЦМИ по потреблению появится после индексации PDF",
+    "citation": {"kind": "bank_doc", "source_id": "stub-cmi-consumption", "title": "ЦМИ: Потребление на пике (заглушка)", "page": null}
+  }
+]

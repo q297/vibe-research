@@ -1,0 +1,6 @@
+[
+  {"user_id": "u-demo", "username": "demo", "password": "demo-alfa-2026", "display_name": "Демо-администратор", "role": "cfo", "client_ids": ["c-001", "c-002", "c-003"], "is_demo_admin": true},
+  {"user_id": "u-cfo-a", "username": "cfo.a", "password": "demo-alfa-2026", "display_name": "Финансовый директор, компания A", "role": "cfo", "client_ids": ["c-001"], "is_demo_admin": false},
+  {"user_id": "u-ceo-b", "username": "ceo.b", "password": "demo-alfa-2026", "display_name": "Генеральный директор, компания B", "role": "ceo", "client_ids": ["c-002"], "is_demo_admin": false},
+  {"user_id": "u-treasurer-c", "username": "treasurer.c", "password": "demo-alfa-2026", "display_name": "Казначей, компания C", "role": "treasurer", "client_ids": ["c-003"], "is_demo_admin": false}
+]

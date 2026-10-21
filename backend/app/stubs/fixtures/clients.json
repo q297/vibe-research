@@ -1,0 +1,80 @@
+[
+  {
+    "client_id": "c-001",
+    "display_name": "Компания A · металлургия, экспорт",
+    "okved_code": "24.10",
+    "okved_name": "Производство чугуна, стали и ферросплавов",
+    "region": "Свердловская область",
+    "revenue_bn_rub": 48.5,
+    "client_type": "active",
+    "company_age_years": 23,
+    "employees": 5200,
+    "group_id": "g-101",
+    "city": "Екатеринбург",
+    "products": ["settlement", "credit", "leasing", "guarantees", "payroll"],
+    "debt_load": "high",
+    "foreign_trade": {"has_fea": true, "countries": ["CN", "TR"]},
+    "sensitivities": [
+      {"tag": "key_rate", "weight": 0.9, "reason": "Кредиты и лизинг в Альфа-Банке"},
+      {"tag": "credit_market", "weight": 0.7, "reason": "Высокая долговая нагрузка"},
+      {"tag": "fx_rate", "weight": 0.9, "reason": "Экспортная выручка в CNY"},
+      {"tag": "export_import", "weight": 0.8, "reason": "ВЭД: Китай, Турция"},
+      {"tag": "commodities_metals", "weight": 0.9, "reason": "Отрасль: металлургия"},
+      {"tag": "sanctions", "weight": 0.5, "reason": "Экспорт металлов"}
+    ],
+    "top_counterparties": [
+      {"counterparty_id": "cp-501", "okved_code": "05.10", "okved_name": "Добыча угля", "role": "supplier", "share": 0.31},
+      {"counterparty_id": "cp-502", "okved_code": "49.20", "okved_name": "Железнодорожные грузоперевозки", "role": "supplier", "share": 0.12}
+    ]
+  },
+  {
+    "client_id": "c-002",
+    "display_name": "Компания B · продуктовый ритейл",
+    "okved_code": "47.11",
+    "okved_name": "Розничная торговля в неспециализированных магазинах",
+    "region": "Москва",
+    "revenue_bn_rub": 22.1,
+    "client_type": "active",
+    "company_age_years": 11,
+    "employees": 7800,
+    "group_id": null,
+    "city": "Москва",
+    "products": ["settlement", "deposits", "payroll"],
+    "debt_load": "none",
+    "foreign_trade": {"has_fea": false, "countries": []},
+    "sensitivities": [
+      {"tag": "consumer_demand", "weight": 0.95, "reason": "Отрасль: розничная торговля"},
+      {"tag": "inflation", "weight": 0.85, "reason": "Цены закупки и спрос населения"},
+      {"tag": "key_rate", "weight": 0.4, "reason": "Свободная ликвидность на депозитах"},
+      {"tag": "labor_market", "weight": 0.6, "reason": "Крупный ФОТ, зарплатный проект"},
+      {"tag": "regulation", "weight": 0.5, "reason": "Маркировка и торговые правила"}
+    ],
+    "top_counterparties": [
+      {"counterparty_id": "cp-601", "okved_code": "10.51", "okved_name": "Производство молочной продукции", "role": "supplier", "share": 0.18}
+    ]
+  },
+  {
+    "client_id": "c-003",
+    "display_name": "Компания C · агрохолдинг",
+    "okved_code": "01.11",
+    "okved_name": "Выращивание зерновых культур",
+    "region": "Краснодарский край",
+    "revenue_bn_rub": 17.4,
+    "client_type": "potential",
+    "company_age_years": null,
+    "employees": null,
+    "group_id": "g-205",
+    "city": null,
+    "products": ["settlement", "credit", "factoring"],
+    "debt_load": "medium",
+    "foreign_trade": {"has_fea": true, "countries": ["EG"]},
+    "sensitivities": [
+      {"tag": "commodities_agri", "weight": 0.95, "reason": "Отрасль: зерновые"},
+      {"tag": "export_import", "weight": 0.8, "reason": "ВЭД: Египет"},
+      {"tag": "fx_rate", "weight": 0.7, "reason": "Экспортные контракты в USD"},
+      {"tag": "key_rate", "weight": 0.7, "reason": "Кредит и факторинг"},
+      {"tag": "logistics", "weight": 0.5, "reason": "Экспорт через порты юга"}
+    ],
+    "top_counterparties": []
+  }
+]

@@ -1,0 +1,330 @@
+{
+  "$defs": {
+    "ClientType": {
+      "enum": [
+        "active",
+        "potential"
+      ],
+      "title": "ClientType",
+      "type": "string"
+    },
+    "Counterparty": {
+      "additionalProperties": false,
+      "properties": {
+        "counterparty_id": {
+          "title": "Counterparty Id",
+          "type": "string"
+        },
+        "okved_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Okved Code"
+        },
+        "okved_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Okved Name"
+        },
+        "role": {
+          "description": "supplier or buyer",
+          "title": "Role",
+          "type": "string"
+        },
+        "share": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Share of payment volume",
+          "title": "Share"
+        }
+      },
+      "required": [
+        "counterparty_id",
+        "role"
+      ],
+      "title": "Counterparty",
+      "type": "object"
+    },
+    "DebtLoad": {
+      "enum": [
+        "none",
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "DebtLoad",
+      "type": "string"
+    },
+    "ForeignTrade": {
+      "additionalProperties": false,
+      "properties": {
+        "has_fea": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None means unknown, not 'no' (D8)",
+          "title": "Has Fea"
+        },
+        "countries": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Countries",
+          "type": "array"
+        }
+      },
+      "title": "ForeignTrade",
+      "type": "object"
+    },
+    "Product": {
+      "enum": [
+        "settlement",
+        "guarantees",
+        "credit",
+        "leasing",
+        "deposits",
+        "payroll",
+        "factoring"
+      ],
+      "title": "Product",
+      "type": "string"
+    },
+    "Sensitivity": {
+      "additionalProperties": false,
+      "properties": {
+        "tag": {
+          "$ref": "#/$defs/SensitivityTag"
+        },
+        "weight": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Weight",
+          "type": "number"
+        },
+        "reason": {
+          "description": "Human readable, shown in the 'why relevant' chips",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag",
+        "weight",
+        "reason"
+      ],
+      "title": "Sensitivity",
+      "type": "object"
+    },
+    "SensitivityTag": {
+      "enum": [
+        "key_rate",
+        "fx_rate",
+        "inflation",
+        "consumer_demand",
+        "commodities_energy",
+        "commodities_metals",
+        "commodities_agri",
+        "gold",
+        "credit_market",
+        "bond_market",
+        "export_import",
+        "sanctions",
+        "regulation",
+        "taxes",
+        "logistics",
+        "labor_market",
+        "other"
+      ],
+      "title": "SensitivityTag",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "client_id": {
+      "title": "Client Id",
+      "type": "string"
+    },
+    "display_name": {
+      "description": "Synthetic alias, data is anonymized",
+      "title": "Display Name",
+      "type": "string"
+    },
+    "okved_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Okved Code"
+    },
+    "okved_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Okved Name"
+    },
+    "region": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Region"
+    },
+    "revenue_bn_rub": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revenue Bn Rub"
+    },
+    "client_type": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClientType"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "company_age_years": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Company Age Years"
+    },
+    "employees": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Employees"
+    },
+    "group_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Group Id"
+    },
+    "city": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "City"
+    },
+    "products": {
+      "items": {
+        "$ref": "#/$defs/Product"
+      },
+      "title": "Products",
+      "type": "array"
+    },
+    "debt_load": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DebtLoad"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "foreign_trade": {
+      "$ref": "#/$defs/ForeignTrade"
+    },
+    "sensitivities": {
+      "items": {
+        "$ref": "#/$defs/Sensitivity"
+      },
+      "title": "Sensitivities",
+      "type": "array"
+    },
+    "top_counterparties": {
+      "items": {
+        "$ref": "#/$defs/Counterparty"
+      },
+      "title": "Top Counterparties",
+      "type": "array"
+    }
+  },
+  "required": [
+    "client_id",
+    "display_name"
+  ],
+  "title": "ClientProfile",
+  "type": "object"
+}

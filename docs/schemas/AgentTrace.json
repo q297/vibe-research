@@ -1,0 +1,288 @@
+{
+  "$defs": {
+    "Citation": {
+      "additionalProperties": false,
+      "description": "Link to a primary source (D7); snippets stay short because of copyright (H2)",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/CitationKind"
+        },
+        "source_id": {
+          "description": "Article id, bank document chunk id or client feature key",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page in a bank PDF",
+          "title": "Page"
+        },
+        "snippet": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snippet"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published At"
+        }
+      },
+      "required": [
+        "kind",
+        "source_id",
+        "title"
+      ],
+      "title": "Citation",
+      "type": "object"
+    },
+    "CitationKind": {
+      "enum": [
+        "article",
+        "bank_doc",
+        "client_data",
+        "user_input"
+      ],
+      "title": "CitationKind",
+      "type": "string"
+    },
+    "StepKind": {
+      "enum": [
+        "plan",
+        "tool_call",
+        "draft",
+        "critic",
+        "retry",
+        "final"
+      ],
+      "title": "StepKind",
+      "type": "string"
+    },
+    "StepStatus": {
+      "enum": [
+        "ok",
+        "warning",
+        "error"
+      ],
+      "title": "StepStatus",
+      "type": "string"
+    },
+    "TraceStep": {
+      "additionalProperties": false,
+      "properties": {
+        "index": {
+          "title": "Index",
+          "type": "integer"
+        },
+        "kind": {
+          "$ref": "#/$defs/StepKind"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        },
+        "tool": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool"
+        },
+        "input_summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Summary"
+        },
+        "output_summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Summary"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/Citation"
+          },
+          "title": "Citations",
+          "type": "array"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "tokens_in": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tokens In"
+        },
+        "tokens_out": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tokens Out"
+        },
+        "duration_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration Ms"
+        },
+        "status": {
+          "$ref": "#/$defs/StepStatus",
+          "default": "ok"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "kind",
+        "title",
+        "started_at"
+      ],
+      "title": "TraceStep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "insight_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Insight Id"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/TraceStep"
+      },
+      "title": "Steps",
+      "type": "array"
+    },
+    "total_tokens": {
+      "default": 0,
+      "title": "Total Tokens",
+      "type": "integer"
+    },
+    "retries": {
+      "default": 0,
+      "title": "Retries",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "trace_id"
+  ],
+  "title": "AgentTrace",
+  "type": "object"
+}

@@ -1,0 +1,455 @@
+{
+  "$defs": {
+    "Action": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance",
+          "default": "ai_inference"
+        },
+        "priority": {
+          "$ref": "#/$defs/Level",
+          "default": "medium"
+        },
+        "product_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bank product, if relevant",
+          "title": "Product Hint"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Action",
+      "type": "object"
+    },
+    "BankPosition": {
+      "additionalProperties": false,
+      "description": "Alfa-Bank analytics view (D12); value may be absent for qualitative views",
+      "properties": {
+        "position_id": {
+          "title": "Position Id",
+          "type": "string"
+        },
+        "topic": {
+          "title": "Topic",
+          "type": "string"
+        },
+        "indicator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Indicator"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "range_low": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Range Low"
+        },
+        "range_high": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Range High"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "horizon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Horizon"
+        },
+        "direction": {
+          "$ref": "#/$defs/Direction",
+          "default": "unknown"
+        },
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "citation": {
+          "$ref": "#/$defs/Citation"
+        }
+      },
+      "required": [
+        "position_id",
+        "topic",
+        "statement",
+        "citation"
+      ],
+      "title": "BankPosition",
+      "type": "object"
+    },
+    "Citation": {
+      "additionalProperties": false,
+      "description": "Link to a primary source (D7); snippets stay short because of copyright (H2)",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/CitationKind"
+        },
+        "source_id": {
+          "description": "Article id, bank document chunk id or client feature key",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page in a bank PDF",
+          "title": "Page"
+        },
+        "snippet": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snippet"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published At"
+        }
+      },
+      "required": [
+        "kind",
+        "source_id",
+        "title"
+      ],
+      "title": "Citation",
+      "type": "object"
+    },
+    "CitationKind": {
+      "enum": [
+        "article",
+        "bank_doc",
+        "client_data",
+        "user_input"
+      ],
+      "title": "CitationKind",
+      "type": "string"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "description": "Single statement with its provenance; every block of an insight is a list of claims",
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/Citation"
+          },
+          "title": "Citations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "text",
+        "provenance"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "Direction": {
+      "enum": [
+        "up",
+        "down",
+        "flat",
+        "unknown"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "ImpactItem": {
+      "additionalProperties": false,
+      "properties": {
+        "claim": {
+          "$ref": "#/$defs/Claim"
+        },
+        "severity": {
+          "$ref": "#/$defs/Level",
+          "default": "medium"
+        },
+        "horizon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Horizon"
+        }
+      },
+      "required": [
+        "claim"
+      ],
+      "title": "ImpactItem",
+      "type": "object"
+    },
+    "InsightStatus": {
+      "enum": [
+        "pending",
+        "running",
+        "ready",
+        "failed",
+        "stale"
+      ],
+      "title": "InsightStatus",
+      "type": "string"
+    },
+    "Level": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "Level",
+      "type": "string"
+    },
+    "Provenance": {
+      "description": "Where a statement comes from (D6), drives the colored badges in the UI",
+      "enum": [
+        "source_fact",
+        "bank_position",
+        "ai_inference"
+      ],
+      "title": "Provenance",
+      "type": "string"
+    },
+    "UserRole": {
+      "enum": [
+        "ceo",
+        "cfo",
+        "accountant",
+        "treasurer"
+      ],
+      "title": "UserRole",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "insight_id": {
+      "title": "Insight Id",
+      "type": "string"
+    },
+    "client_id": {
+      "title": "Client Id",
+      "type": "string"
+    },
+    "event_id": {
+      "title": "Event Id",
+      "type": "string"
+    },
+    "event_version": {
+      "title": "Event Version",
+      "type": "integer"
+    },
+    "role": {
+      "$ref": "#/$defs/UserRole"
+    },
+    "status": {
+      "$ref": "#/$defs/InsightStatus"
+    },
+    "headline": {
+      "title": "Headline",
+      "type": "string"
+    },
+    "what_happened": {
+      "items": {
+        "$ref": "#/$defs/Claim"
+      },
+      "title": "What Happened",
+      "type": "array"
+    },
+    "why_it_matters": {
+      "items": {
+        "$ref": "#/$defs/Claim"
+      },
+      "title": "Why It Matters",
+      "type": "array"
+    },
+    "risks": {
+      "items": {
+        "$ref": "#/$defs/ImpactItem"
+      },
+      "title": "Risks",
+      "type": "array"
+    },
+    "opportunities": {
+      "items": {
+        "$ref": "#/$defs/ImpactItem"
+      },
+      "title": "Opportunities",
+      "type": "array"
+    },
+    "actions": {
+      "items": {
+        "$ref": "#/$defs/Action"
+      },
+      "title": "Actions",
+      "type": "array"
+    },
+    "bank_positions": {
+      "items": {
+        "$ref": "#/$defs/BankPosition"
+      },
+      "title": "Bank Positions",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Citation"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "client_features_used": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Client Features Used",
+      "type": "array"
+    },
+    "data_gaps": {
+      "description": "What the agent could not find or verify",
+      "items": {
+        "type": "string"
+      },
+      "title": "Data Gaps",
+      "type": "array"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "insight_id",
+    "client_id",
+    "event_id",
+    "event_version",
+    "role",
+    "status",
+    "headline",
+    "trace_id",
+    "created_at"
+  ],
+  "title": "Insight",
+  "type": "object"
+}

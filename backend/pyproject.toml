@@ -1,0 +1,33 @@
+[project]
+name = "alfa-news-backend"
+version = "0.1.0"
+description = "BFF for the news analytics prototype: public HTTP API for the frontend"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic>=2.7",
+    "pydantic-settings",
+    "pyjwt",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "ruff",
+]
+
+[tool.uv]
+# Only resolve package versions that are at least two weeks old
+exclude-newer = "2026-10-07T00:00:00Z"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

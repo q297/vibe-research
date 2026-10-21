@@ -1,0 +1,203 @@
+{
+  "$defs": {
+    "Citation": {
+      "additionalProperties": false,
+      "description": "Link to a primary source (D7); snippets stay short because of copyright (H2)",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/CitationKind"
+        },
+        "source_id": {
+          "description": "Article id, bank document chunk id or client feature key",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page in a bank PDF",
+          "title": "Page"
+        },
+        "snippet": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snippet"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published At"
+        }
+      },
+      "required": [
+        "kind",
+        "source_id",
+        "title"
+      ],
+      "title": "Citation",
+      "type": "object"
+    },
+    "CitationKind": {
+      "enum": [
+        "article",
+        "bank_doc",
+        "client_data",
+        "user_input"
+      ],
+      "title": "CitationKind",
+      "type": "string"
+    },
+    "Direction": {
+      "enum": [
+        "up",
+        "down",
+        "flat",
+        "unknown"
+      ],
+      "title": "Direction",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Alfa-Bank analytics view (D12); value may be absent for qualitative views",
+  "properties": {
+    "position_id": {
+      "title": "Position Id",
+      "type": "string"
+    },
+    "topic": {
+      "title": "Topic",
+      "type": "string"
+    },
+    "indicator": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Indicator"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Value"
+    },
+    "range_low": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Range Low"
+    },
+    "range_high": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Range High"
+    },
+    "unit": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Unit"
+    },
+    "horizon": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Horizon"
+    },
+    "direction": {
+      "$ref": "#/$defs/Direction",
+      "default": "unknown"
+    },
+    "statement": {
+      "title": "Statement",
+      "type": "string"
+    },
+    "citation": {
+      "$ref": "#/$defs/Citation"
+    }
+  },
+  "required": [
+    "position_id",
+    "topic",
+    "statement",
+    "citation"
+  ],
+  "title": "BankPosition",
+  "type": "object"
+}

@@ -58,6 +58,7 @@ class Metrics(Contract):
 class Budget(Contract):
     tokens_used_today: int
     tokens_limit_today: int | None = None
+    cost_rub_today: float | None = None
     exhausted: bool = False
 
 

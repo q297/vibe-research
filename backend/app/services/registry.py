@@ -32,7 +32,12 @@ def get_services() -> Services:
 
     news = StubNews()
     agent = StubAgent(news, step_delay_s=settings.stub_step_delay_s)
-    store = Store()
+    if settings.database_url:
+        from app.services.repository import PgRepository
+
+        store = Store(PgRepository(settings.database_url))
+    else:
+        store = Store()
     return Services(
         news=news,
         profiles=StubProfiles(),

@@ -4,6 +4,8 @@ import { FeedPage } from "./pages/FeedPage";
 import { HomePage } from "./pages/HomePage";
 import { InsightPage } from "./pages/InsightPage";
 import { LoginPage } from "./pages/LoginPage";
+import { MetricsPage } from "./pages/MetricsPage";
+import { SubmitNewsPage } from "./pages/SubmitNewsPage";
 import { useSession } from "./session";
 
 export default function App() {
@@ -15,7 +17,9 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="news" element={<FeedPage />} />
+        <Route path="news/new" element={<SubmitNewsPage />} />
         <Route path="news/:clientId/:eventId" element={<InsightPage />} />
+        {me.is_demo_admin && <Route path="metrics" element={<MetricsPage />} />}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

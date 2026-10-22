@@ -5,7 +5,7 @@ from enum import StrEnum
 
 from pydantic import Field
 
-from app.contracts.common import SCHEMA_VERSION, Citation, Claim, Contract, Provenance
+from app.contracts.common import SCHEMA_VERSION, Citation, Claim, Contract, ErrorCode, Provenance
 
 
 class UserRole(StrEnum):
@@ -63,6 +63,9 @@ class Action(Contract):
     provenance: Provenance = Provenance.AI_INFERENCE
     priority: Level = Level.MEDIUM
     product_hint: str | None = Field(default=None, description="Bank product, if relevant")
+    is_promo: bool = Field(
+        default=False, description="Native bank offer, the UI marks it apart from AI conclusions"
+    )
 
 
 class Insight(Contract):
@@ -84,6 +87,15 @@ class Insight(Contract):
     client_features_used: list[str] = Field(default_factory=list)
     data_gaps: list[str] = Field(
         default_factory=list, description="What the agent could not find or verify"
+    )
+    scenarios: list[Claim] = Field(
+        default_factory=list, description="Factors to watch and questions for further analysis"
+    )
+    relevance: float | None = Field(default=None, ge=0, le=1)
+    confidence: Level | None = None
+    critic_passed: bool | None = None
+    critic_notes: list[str] = Field(
+        default_factory=list, description="What the critic found and what was fixed"
     )
     trace_id: str
     created_at: datetime
@@ -119,6 +131,9 @@ class TraceStep(Contract):
     duration_ms: int | None = None
     status: StepStatus = StepStatus.OK
     started_at: datetime
+    retry_of: int | None = Field(default=None, description="Index of the step being redone")
+    cost_rub: float | None = None
+    cache_hit: bool = False
 
 
 class AgentTrace(Contract):
@@ -126,6 +141,7 @@ class AgentTrace(Contract):
     insight_id: str | None = None
     steps: list[TraceStep] = Field(default_factory=list)
     total_tokens: int = 0
+    total_cost_rub: float = 0
     retries: int = 0
 
 
@@ -145,6 +161,7 @@ class Job(Contract):
     trace_id: str
     insight_id: str | None = None
     error: str | None = None
+    error_code: ErrorCode | None = None
 
 
 class RunInsightRequest(Contract):

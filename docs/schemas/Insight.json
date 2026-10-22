@@ -27,6 +27,12 @@
           "default": null,
           "description": "Bank product, if relevant",
           "title": "Product Hint"
+        },
+        "is_promo": {
+          "default": false,
+          "description": "Native bank offer, the UI marks it apart from AI conclusions",
+          "title": "Is Promo",
+          "type": "boolean"
         }
       },
       "required": [
@@ -427,6 +433,59 @@
         "type": "string"
       },
       "title": "Data Gaps",
+      "type": "array"
+    },
+    "scenarios": {
+      "description": "Factors to watch and questions for further analysis",
+      "items": {
+        "$ref": "#/$defs/Claim"
+      },
+      "title": "Scenarios",
+      "type": "array"
+    },
+    "relevance": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Relevance"
+    },
+    "confidence": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Level"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "critic_passed": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Critic Passed"
+    },
+    "critic_notes": {
+      "description": "What the critic found and what was fixed",
+      "items": {
+        "type": "string"
+      },
+      "title": "Critic Notes",
       "type": "array"
     },
     "trace_id": {

@@ -1,4 +1,5 @@
 import hashlib
+import re
 from datetime import UTC, datetime
 
 from app.contracts.events import (
@@ -54,7 +55,12 @@ class StubNews:
             return self._events[event_id]
 
         lowered = request.text.lower()
-        tags = [tag for tag, words in _KEYWORDS.items() if any(w in lowered for w in words)]
+        # Match word starts only, so "порт" does not fire inside "импорт"
+        tags = [
+            tag
+            for tag, words in _KEYWORDS.items()
+            if any(re.search(rf"\b{re.escape(w)}", lowered) for w in words)
+        ]
         now = datetime.now(UTC)
         title = request.title or request.text.strip().split("\n")[0][:120]
         event = Event(

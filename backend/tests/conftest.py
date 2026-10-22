@@ -18,6 +18,7 @@ USERS = {
 @pytest.fixture(autouse=True)
 def fast_stubs(monkeypatch):
     monkeypatch.setenv("STUB_STEP_DELAY_S", "0")
+    monkeypatch.delenv("DATABASE_URL", raising=False)
     get_settings.cache_clear()
     get_services.cache_clear()
     yield

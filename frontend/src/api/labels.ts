@@ -27,3 +27,29 @@ export const LEVEL_LABELS: Record<Schemas["Level"], string> = {
   medium: "средний",
   high: "высокий",
 };
+
+// Record over the generated enum: a new tag in the taxonomy fails the typecheck until labelled
+export const TAG_LABELS: Record<Schemas["SensitivityTag"], string> = {
+  key_rate: "Ключевая ставка",
+  fx_rate: "Валютный курс",
+  inflation: "Инфляция",
+  consumer_demand: "Потребительский спрос",
+  commodities_energy: "Энергоносители",
+  commodities_metals: "Металлы",
+  commodities_agri: "Агросырьё",
+  gold: "Золото",
+  credit_market: "Кредитный рынок",
+  bond_market: "Рынок облигаций",
+  export_import: "ВЭД",
+  sanctions: "Санкции",
+  regulation: "Регулирование",
+  taxes: "Налоги",
+  logistics: "Логистика",
+  labor_market: "Рынок труда",
+  other: "Прочее",
+};
+
+export const JOB_ERRORS: Partial<Record<Schemas["ErrorCode"], string>> = {
+  budget_exhausted: "Дневной лимит AI исчерпан. Новые инсайты появятся завтра, готовые доступны в ленте",
+  upstream_failed: "Агент не смог построить инсайт",
+};

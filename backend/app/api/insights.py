@@ -87,6 +87,9 @@ async def run_insight(
     if cached and not body.force and cached.event_version >= event.version:
         return svc.jobs.completed(cached)
 
+    running = svc.jobs.active(client_id, event_id, role)
+    if running:
+        return running
     svc.limiter.check(user.user_id, "run", settings.rate_limit_runs_per_hour)
     return svc.jobs.start(profile=profile, event=event, role=role, trace_id=new_trace_id())
 
@@ -139,7 +142,7 @@ async def get_trace(insight_id: str, user: CurrentUser, svc: Svc) -> AgentTrace:
 @router.get("/insights/{insight_id}/chat", response_model=list[ChatMessage])
 async def get_chat(insight_id: str, user: CurrentUser, svc: Svc) -> list[ChatMessage]:
     _owned_insight(svc, user, insight_id)
-    return svc.store.chats.get(f"{user.user_id}:{insight_id}", [])
+    return svc.store.chat(user.user_id, insight_id)
 
 
 @router.post("/insights/{insight_id}/chat", response_model=ChatResponse)
@@ -148,11 +151,11 @@ async def post_chat(
 ) -> ChatResponse:
     insight = _owned_insight(svc, user, insight_id)
     svc.limiter.check(user.user_id, "chat", settings.rate_limit_chat_per_hour)
-    history = svc.store.chats.setdefault(f"{user.user_id}:{insight_id}", [])
+    history = svc.store.chat(user.user_id, insight_id)
     question = ChatMessage(role=ChatRole.USER, content=body.message, created_at=datetime.now(UTC))
     trace_id = new_trace_id()
     answer = await svc.agent.chat(
         insight=insight, history=list(history), message=body.message, trace_id=trace_id
     )
-    history.extend([question, answer])
+    await svc.store.add_chat(user.user_id, insight_id, [question, answer])
     return ChatResponse(messages=[question, answer], trace_id=trace_id)

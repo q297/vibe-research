@@ -34,6 +34,9 @@ async def me(user: CurrentUser) -> Me:
 
 @router.get("/metrics", response_model=Metrics)
 async def metrics(user: CurrentUser, svc: Svc) -> Metrics:
+    # Aggregates span all clients, so only the demo admin may see them
+    if not user.is_demo_admin:
+        raise AppError(403, ErrorCode.FORBIDDEN, "Metrics are available to the demo admin only")
     store = svc.store
     traces = [t for t in store.traces.values() if t.insight_id]
     durations = store.job_durations_ms
@@ -52,8 +55,12 @@ async def metrics(user: CurrentUser, svc: Svc) -> Metrics:
 @router.get("/budget", response_model=Budget)
 async def budget(user: CurrentUser, svc: Svc, settings: Cfg) -> Budget:
     # Real counter comes from the agent's token log (I1, I3)
-    used = sum(t.total_tokens for t in svc.store.traces.values())
+    traces = svc.store.traces.values()
+    used = sum(t.total_tokens for t in traces)
     limit = settings.daily_token_limit
     return Budget(
-        tokens_used_today=used, tokens_limit_today=limit, exhausted=bool(limit and used >= limit)
+        tokens_used_today=used,
+        tokens_limit_today=limit,
+        cost_rub_today=round(sum(t.total_cost_rub for t in traces), 2),
+        exhausted=bool(limit and used >= limit),
     )

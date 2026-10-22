@@ -13,6 +13,11 @@ export function Layout() {
   const navigate = useNavigate();
   const clients = useQuery({ queryKey: ["clients"], queryFn: () => unwrap(api.GET("/v1/clients")) });
   const health = useQuery({ queryKey: ["health"], queryFn: () => unwrap(api.GET("/v1/health")) });
+  const budget = useQuery({
+    queryKey: ["budget"],
+    queryFn: () => unwrap(api.GET("/v1/budget")),
+    refetchInterval: 60_000,
+  });
 
   return (
     <div className="min-h-screen">
@@ -29,9 +34,17 @@ export function Layout() {
             <NavLink to="/" end className={navClass}>
               Главная
             </NavLink>
-            <NavLink to="/news" className={navClass}>
+            <NavLink to="/news" end className={navClass}>
               Новости для бизнеса
             </NavLink>
+            <NavLink to="/news/new" className={navClass}>
+              Своя новость
+            </NavLink>
+            {me?.is_demo_admin && (
+              <NavLink to="/metrics" className={navClass}>
+                Качество
+              </NavLink>
+            )}
           </nav>
           <div className="ml-auto flex flex-wrap items-center gap-2 text-sm">
             {health.data?.mock_mode && (
@@ -46,7 +59,7 @@ export function Layout() {
                 value={clientId ?? ""}
                 onChange={(e) => {
                   setClientId(e.target.value);
-                  if (pathname.startsWith("/news/")) navigate("/news");
+                  if (/^\/news\/(?!new$)/.test(pathname)) navigate("/news");
                 }}
               >
                 {clients.data.map((c) => (
@@ -75,6 +88,17 @@ export function Layout() {
           </div>
         </div>
       </header>
+      {/* Degraded modes: users still get cached insights, but no new ones */}
+      {budget.data?.exhausted && (
+        <div className="bg-amber-100 px-4 py-2 text-center text-sm text-amber-900">
+          Дневной лимит AI исчерпан. Готовые инсайты доступны, новые появятся завтра
+        </div>
+      )}
+      {health.data?.offline_mode && (
+        <div className="bg-slate-200 px-4 py-2 text-center text-sm text-slate-700">
+          Офлайн-режим: показываем сохранённые новости и инсайты
+        </div>
+      )}
       <main className="mx-auto max-w-6xl px-4 py-6">
         <Outlet />
       </main>

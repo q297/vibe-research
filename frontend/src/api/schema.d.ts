@@ -331,6 +331,12 @@ export interface components {
              * @description Bank product, if relevant
              */
             product_hint?: string | null;
+            /**
+             * Is Promo
+             * @description Native bank offer, the UI marks it apart from AI conclusions
+             * @default false
+             */
+            is_promo: boolean;
         };
         /** AgentTrace */
         AgentTrace: {
@@ -345,6 +351,11 @@ export interface components {
              * @default 0
              */
             total_tokens: number;
+            /**
+             * Total Cost Rub
+             * @default 0
+             */
+            total_cost_rub: number;
             /**
              * Retries
              * @default 0
@@ -417,6 +428,8 @@ export interface components {
             tokens_used_today: number;
             /** Tokens Limit Today */
             tokens_limit_today?: number | null;
+            /** Cost Rub Today */
+            cost_rub_today?: number | null;
             /**
              * Exhausted
              * @default false
@@ -895,6 +908,21 @@ export interface components {
              * @description What the agent could not find or verify
              */
             data_gaps?: string[];
+            /**
+             * Scenarios
+             * @description Factors to watch and questions for further analysis
+             */
+            scenarios?: components["schemas"]["Claim"][];
+            /** Relevance */
+            relevance?: number | null;
+            confidence?: components["schemas"]["Level"] | null;
+            /** Critic Passed */
+            critic_passed?: boolean | null;
+            /**
+             * Critic Notes
+             * @description What the critic found and what was fixed
+             */
+            critic_notes?: string[];
             /** Trace Id */
             trace_id: string;
             /**
@@ -924,6 +952,7 @@ export interface components {
             insight_id?: string | null;
             /** Error */
             error?: string | null;
+            error_code?: components["schemas"]["ErrorCode"] | null;
         };
         /**
          * JobStatus
@@ -1101,6 +1130,18 @@ export interface components {
              * Format: date-time
              */
             started_at: string;
+            /**
+             * Retry Of
+             * @description Index of the step being redone
+             */
+            retry_of?: number | null;
+            /** Cost Rub */
+            cost_rub?: number | null;
+            /**
+             * Cache Hit
+             * @default false
+             */
+            cache_hit: boolean;
         };
         /**
          * UserRole

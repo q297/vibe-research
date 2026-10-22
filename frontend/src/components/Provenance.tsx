@@ -1,8 +1,19 @@
 import type { Schemas } from "../api/client";
 import { PROVENANCE } from "../api/labels";
 
-export function ProvenanceBadge({ provenance }: { provenance: Schemas["Provenance"] }) {
-  const { label, className } = PROVENANCE[provenance];
+const UNVERIFIED = {
+  label: "Из введённого текста",
+  className: "bg-amber-50 text-amber-800 ring-amber-300",
+};
+
+export function ProvenanceBadge({
+  provenance,
+  unverified = false,
+}: {
+  provenance: Schemas["Provenance"];
+  unverified?: boolean;
+}) {
+  const { label, className } = unverified ? UNVERIFIED : PROVENANCE[provenance];
   return (
     <span className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-xs ring-1 ${className}`}>
       {label}
@@ -27,10 +38,16 @@ export function CitationLink({ citation }: { citation: Schemas["Citation"] }) {
 }
 
 export function ClaimView({ claim }: { claim: Schemas["Claim"] }) {
+  // A "fact" backed only by user-pasted text is not verified and must not look like one (E4)
+  const citations = claim.citations ?? [];
+  const unverified =
+    claim.provenance === "source_fact" &&
+    citations.length > 0 &&
+    citations.every((c) => c.kind === "user_input");
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-start gap-2">
-        <ProvenanceBadge provenance={claim.provenance} />
+        <ProvenanceBadge provenance={claim.provenance} unverified={unverified} />
         <p className="text-sm leading-relaxed">{claim.text}</p>
       </div>
       {claim.citations && claim.citations.length > 0 && (

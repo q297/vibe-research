@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type FormEvent, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, type Schemas, unwrap } from "../api/client";
-import { LEVEL_LABELS } from "../api/labels";
+import { JOB_ERRORS, LEVEL_LABELS, TAG_LABELS } from "../api/labels";
 import { streamJob } from "../api/stream";
 import { ErrorBox } from "../components/ErrorBox";
 import { CitationLink, ClaimView, ProvenanceBadge } from "../components/Provenance";
@@ -64,6 +64,11 @@ export function InsightPage() {
     if (clientId !== selectedClientId && me?.client_ids.includes(clientId)) setClientId(clientId);
   }, [clientId, selectedClientId, me, setClientId]);
   const insightId = job?.status === "done" ? job.insight_id : null;
+  const event = useQuery({
+    queryKey: ["event", eventId],
+    queryFn: () =>
+      unwrap(api.GET("/v1/events/{event_id}", { params: { path: { event_id: eventId } } })),
+  });
 
   const insight = useQuery({
     queryKey: ["insight", insightId],
@@ -78,14 +83,15 @@ export function InsightPage() {
       <Link to="/news" className="text-sm text-slate-500 hover:text-slate-900">
         ← Все новости
       </Link>
+      {event.data && <EventHeader event={event.data} />}
       {error != null && <ErrorBox error={error} />}
-      {job?.status === "failed" && <ErrorBox error={new Error(job.error ?? "Агент не справился")} />}
+      {job?.status === "failed" && <JobError job={job} onRetry={rerun} />}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
-          {!insight.data && (
+          {!insight.data && (running || !job) && (
             <div className="rounded-2xl border border-slate-200 bg-white p-6 text-slate-500">
-              {running || !job ? "Агент анализирует событие для вашей компании…" : null}
+              Агент анализирует событие для вашей компании…
             </div>
           )}
           {insight.data && <InsightCard insight={insight.data} onRerun={rerun} />}
@@ -99,6 +105,68 @@ export function InsightPage() {
           />
         </aside>
       </div>
+    </div>
+  );
+}
+
+function EventHeader({ event }: { event: Schemas["Event"] }) {
+  const userInput = event.origin === "user_input";
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-xs">
+      {userInput && (
+        <span className="rounded bg-amber-100 px-2 py-0.5 text-amber-800">
+          Введено пользователем · не проверено
+        </span>
+      )}
+      {event.classification_status !== "classified" && (
+        <span className="rounded bg-slate-200 px-2 py-0.5 text-slate-700">Тема не определена</span>
+      )}
+      {event.tags?.map((t) => (
+        <span key={t} className="rounded-full bg-slate-100 px-2 py-0.5 text-slate-600">
+          {TAG_LABELS[t]}
+        </span>
+      ))}
+      {!userInput && <span className="text-slate-400">Источников: {event.articles?.length ?? 0}</span>}
+    </div>
+  );
+}
+
+function JobError({ job, onRetry }: { job: Schemas["Job"]; onRetry: () => void }) {
+  const message = (job.error_code && JOB_ERRORS[job.error_code]) ?? "Не удалось построить инсайт";
+  return (
+    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+      <span>{message}</span>
+      {job.error && job.error_code !== "budget_exhausted" && (
+        <span className="text-xs text-red-500">{job.error}</span>
+      )}
+      <span className="text-xs text-red-400">trace: {job.trace_id}</span>
+      {job.error_code !== "budget_exhausted" && (
+        <button onClick={onRetry} className="ml-auto underline">
+          Повторить
+        </button>
+      )}
+    </div>
+  );
+}
+
+function CriticStatus({ insight }: { insight: Schemas["Insight"] }) {
+  if (insight.critic_passed == null && !insight.confidence) return null;
+  const passed = insight.critic_passed !== false;
+  return (
+    <div className={`rounded-lg p-3 text-sm ${passed ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-800"}`}>
+      <div className="flex flex-wrap gap-x-4">
+        {insight.critic_passed != null && (
+          <span>{passed ? "Проверено критиком" : "Критик нашёл проблемы, вывод может быть неполным"}</span>
+        )}
+        {insight.confidence && <span>Уверенность: {LEVEL_LABELS[insight.confidence]}</span>}
+      </div>
+      {insight.critic_notes && insight.critic_notes.length > 0 && (
+        <ul className="mt-1 list-inside list-disc text-xs">
+          {insight.critic_notes.map((n) => (
+            <li key={n}>{n}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -127,6 +195,8 @@ function InsightCard({ insight, onRerun }: { insight: Schemas["Insight"]; onReru
         </p>
       )}
 
+      <CriticStatus insight={insight} />
+
       <Section title="Что произошло">
         {insight.what_happened?.map((c, i) => <ClaimView key={i} claim={c} />)}
       </Section>
@@ -152,19 +222,43 @@ function InsightCard({ insight, onRerun }: { insight: Schemas["Insight"]; onReru
         </Section>
       </div>
 
-      <Section title="Что делать">
-        {insight.actions?.map((a, i) => (
-          <div key={i} className="flex items-start gap-2 text-sm">
-            <ProvenanceBadge provenance={a.provenance ?? "ai_inference"} />
-            <span>{a.text}</span>
-            {a.product_hint && (
-              <span className="ml-auto shrink-0 rounded bg-brand/10 px-2 py-0.5 text-xs text-brand">
-                {a.product_hint}
-              </span>
-            )}
-          </div>
-        ))}
-      </Section>
+      {insight.scenarios && insight.scenarios.length > 0 && (
+        <Section title="На что обратить внимание дальше">
+          {insight.scenarios.map((c, i) => (
+            <ClaimView key={i} claim={c} />
+          ))}
+        </Section>
+      )}
+
+      {insight.actions?.some((a) => !a.is_promo) && (
+        <Section title="Что делать">
+          {insight.actions
+            .filter((a) => !a.is_promo)
+            .map((a, i) => (
+              <div key={i} className="flex items-start gap-2 text-sm">
+                <ProvenanceBadge provenance={a.provenance ?? "ai_inference"} />
+                <span>{a.text}</span>
+              </div>
+            ))}
+        </Section>
+      )}
+
+      {/* Bank offers are advertising, kept apart from AI conclusions */}
+      {insight.actions?.some((a) => a.is_promo) && (
+        <Section title="Предложения Альфа-Банка">
+          {insight.actions
+            .filter((a) => a.is_promo)
+            .map((a, i) => (
+              <div key={i} className="flex items-start gap-2 rounded-lg border border-brand/20 bg-brand/5 p-3 text-sm">
+                <span className="shrink-0 rounded bg-brand px-2 py-0.5 text-xs text-white">Реклама</span>
+                <span>{a.text}</span>
+                {a.product_hint && (
+                  <span className="ml-auto shrink-0 text-xs font-medium text-brand">{a.product_hint}</span>
+                )}
+              </div>
+            ))}
+        </Section>
+      )}
 
       <Section title="Позиция Альфа-Банка">
         {insight.bank_positions?.map((p) => (

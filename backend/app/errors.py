@@ -7,6 +7,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.context import current_trace_id
 from app.contracts.common import ApiError, ErrorCode
+from app.services.ports import BudgetExhausted
 
 log = logging.getLogger("app.errors")
 
@@ -45,6 +46,10 @@ def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(AppError)
     async def _app_error(_: Request, exc: AppError):
         return _response(exc.status, exc.code, exc.message, exc.details)
+
+    @app.exception_handler(BudgetExhausted)
+    async def _budget(_: Request, exc: BudgetExhausted):
+        return _response(503, ErrorCode.BUDGET_EXHAUSTED, "Daily LLM budget is exhausted")
 
     @app.exception_handler(StarletteHTTPException)
     async def _http_error(_: Request, exc: StarletteHTTPException):

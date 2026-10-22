@@ -232,6 +232,36 @@
           "format": "date-time",
           "title": "Started At",
           "type": "string"
+        },
+        "retry_of": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Index of the step being redone",
+          "title": "Retry Of"
+        },
+        "cost_rub": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Rub"
+        },
+        "cache_hit": {
+          "default": false,
+          "title": "Cache Hit",
+          "type": "boolean"
         }
       },
       "required": [
@@ -273,6 +303,11 @@
       "default": 0,
       "title": "Total Tokens",
       "type": "integer"
+    },
+    "total_cost_rub": {
+      "default": 0,
+      "title": "Total Cost Rub",
+      "type": "number"
     },
     "retries": {
       "default": 0,

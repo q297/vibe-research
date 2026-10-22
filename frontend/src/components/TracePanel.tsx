@@ -36,6 +36,10 @@ export function TracePanel({
                 </span>
                 <span className="font-medium">{s.title}</span>
                 {s.tool && <code className="ml-2 text-xs text-slate-500">{s.tool}</code>}
+                {s.retry_of != null && (
+                  <span className="ml-2 text-xs text-amber-600">повтор шага {s.retry_of}</span>
+                )}
+                {s.cache_hit && <span className="ml-2 text-xs text-slate-400">из кэша</span>}
               </div>
               {s.detail && <p className="text-slate-600">{s.detail}</p>}
               {(s.input_summary || s.output_summary) && (
@@ -55,6 +59,7 @@ export function TracePanel({
                 <p className="text-xs text-slate-400">
                   {s.model}
                   {s.tokens_in != null && ` · ${s.tokens_in}+${s.tokens_out ?? 0} токенов`}
+                  {s.cost_rub != null && ` · ${s.cost_rub.toFixed(2)} ₽`}
                 </p>
               )}
             </div>

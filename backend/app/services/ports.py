@@ -13,6 +13,10 @@ from app.contracts.insights import BankPosition, ChatMessage, Insight, TraceStep
 from app.contracts.taxonomy import SensitivityTag
 
 
+class BudgetExhausted(Exception):
+    """Raised by the agent's LLM gateway when the shared daily budget is spent"""
+
+
 class NewsPort(Protocol):
     """Role 2: events and bank knowledge base"""
 
@@ -38,7 +42,11 @@ class ProfilePort(Protocol):
 
 
 class AgentPort(Protocol):
-    """Role 4: insight agent, yields trace steps as they happen and the insight last"""
+    """Role 4: insight agent, yields trace steps as they happen and the insight last
+
+    Failures come as a step with status=error and an Insight with status=failed,
+    only BudgetExhausted is raised
+    """
 
     def run(
         self, *, profile: ClientProfile, event: Event, role: UserRole, trace_id: str

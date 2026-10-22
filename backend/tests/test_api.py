@@ -136,6 +136,13 @@ async def test_chat_and_feedback(client, login):
     assert metrics["feedback_up"] == 1 and metrics["insights_total"] == 1
 
 
+async def test_metrics_only_for_demo_admin(client, login):
+    resp = await client.get("/v1/metrics", headers=await login("cfo.a"))
+    assert resp.status_code == 403
+    resp = await client.get("/v1/metrics", headers=await login("demo"))
+    assert resp.status_code == 200
+
+
 async def test_ingest_user_news_is_idempotent_and_starts_job(client, login):
     headers = await login("demo")
     text = "Правительство обсуждает новые экспортные пошлины на пшеницу и другие зерновые культуры"

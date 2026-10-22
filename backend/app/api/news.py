@@ -30,7 +30,11 @@ async def ingest_news(body: NewsIngestRequest, user: CurrentUser, svc: Svc, sett
         profile = await svc.profiles.get_profile(body.client_id)
         if profile is None:
             raise not_found("Client")
-        svc.limiter.check(user.user_id, "run", settings.rate_limit_runs_per_hour)
-        job = svc.jobs.start(profile=profile, event=event, role=user.role, trace_id=new_trace_id())
+        job = svc.jobs.active(profile.client_id, event.event_id, user.role)
+        if job is None:
+            svc.limiter.check(user.user_id, "run", settings.rate_limit_runs_per_hour)
+            job = svc.jobs.start(
+                profile=profile, event=event, role=user.role, trace_id=new_trace_id()
+            )
         job_id = job.job_id
     return NewsIngestResponse(event=event, job_id=job_id)

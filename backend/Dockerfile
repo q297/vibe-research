@@ -12,10 +12,12 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 
+COPY alembic.ini start.sh ./
+COPY migrations ./migrations
 COPY app ./app
 
 RUN useradd --system --uid 10001 app
 USER app
 
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--root-path", "/api"]
+CMD ["sh", "start.sh"]

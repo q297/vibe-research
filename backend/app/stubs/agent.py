@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 
 from app.contracts.clients import ClientProfile, Product
 from app.contracts.common import Citation, CitationKind, Claim, Provenance
-from app.contracts.events import Event
+from app.contracts.events import Event, EventOrigin
 from app.contracts.insights import (
     Action,
     ChatMessage,
@@ -52,10 +52,9 @@ _PRODUCT_HINTS: list[tuple[SensitivityTag, Product | None, str, str]] = [
 ]
 
 
-def _client_citation(profile: ClientProfile, feature: str, label: str) -> Citation:
-    return Citation(
-        kind=CitationKind.CLIENT_DATA, source_id=f"{profile.client_id}:{feature}", title=label
-    )
+def _client_citation(feature: str, label: str) -> Citation:
+    # source_id is the feature key, it must also be listed in client_features_used
+    return Citation(kind=CitationKind.CLIENT_DATA, source_id=feature, title=label)
 
 
 class StubAgent:
@@ -111,13 +110,15 @@ class StubAgent:
         await asyncio.sleep(self._delay)
 
         data_gaps: list[str] = []
+        critic_notes: list[str] = []
         if not positions:
-            yield step(
+            critic = step(
                 StepKind.CRITIC,
                 "Проверка критиком",
                 detail="Нет позиции Альфа-Банка по теме события",
                 status=StepStatus.WARNING,
             )
+            yield critic
             await asyncio.sleep(self._delay)
             positions = await self._news.bank_positions([SensitivityTag.KEY_RATE.value])
             yield step(
@@ -126,15 +127,22 @@ class StubAgent:
                 tool="search_bank_analytics",
                 input_summary=SensitivityTag.KEY_RATE.value,
                 output_summary=f"Найдено позиций: {len(positions)}",
+                retry_of=critic.index,
             )
             data_gaps.append("Нет прямой позиции банка по теме события")
+            critic_notes.append("Позиция банка взята по смежной теме после повторного поиска")
         else:
             yield step(StepKind.CRITIC, "Проверка критиком", detail="Замечаний нет")
         await asyncio.sleep(self._delay)
 
+        source_kind = (
+            CitationKind.USER_INPUT
+            if event.origin == EventOrigin.USER_INPUT
+            else CitationKind.ARTICLE
+        )
         article_citations = [
             Citation(
-                kind=CitationKind.ARTICLE,
+                kind=source_kind,
                 source_id=a.article_id,
                 title=a.title,
                 url=a.url,
@@ -146,12 +154,14 @@ class StubAgent:
             Claim(
                 text=f"{STUB} Событие затрагивает фактор «{TAG_LABELS_RU[s.tag]}»: {s.reason.lower()}",
                 provenance=Provenance.AI_INFERENCE,
-                citations=[_client_citation(profile, f"sensitivity.{s.tag.value}", s.reason)],
+                citations=[_client_citation(f"sensitivity.{s.tag.value}", s.reason)],
             )
             for s in matched
         ]
         if not why:
             data_gaps.append("Связь события с профилем клиента не найдена")
+        if not article_citations:
+            data_gaps.append("У события нет первоисточников")
         risks = [
             ImpactItem(
                 claim=Claim(
@@ -173,7 +183,7 @@ class StubAgent:
             for s in matched[2:3]
         ]
         actions = [
-            Action(text=f"{STUB} {text}", product_hint=hint, priority=Level.MEDIUM)
+            Action(text=f"{STUB} {text}", product_hint=hint, priority=Level.MEDIUM, is_promo=True)
             for tag, product, text, hint in _PRODUCT_HINTS
             if tag in event.tags and (product is None or product in profile.products)
         ]
@@ -186,12 +196,10 @@ class StubAgent:
             role=role,
             status=InsightStatus.READY,
             headline=f"{event.title}: что это значит для вас",
+            # Only source facts here, the generated event summary is not a fact (D6)
             what_happened=[
-                Claim(
-                    text=event.summary or event.title,
-                    provenance=Provenance.AI_INFERENCE if event.summary else Provenance.SOURCE_FACT,
-                    citations=article_citations,
-                )
+                Claim(text=c.title, provenance=Provenance.SOURCE_FACT, citations=[c])
+                for c in article_citations
             ],
             why_it_matters=why,
             risks=risks,
@@ -201,6 +209,17 @@ class StubAgent:
             sources=article_citations + [p.citation for p in positions],
             client_features_used=[f"sensitivity.{s.tag.value}" for s in matched],
             data_gaps=data_gaps,
+            scenarios=[
+                Claim(
+                    text=f"{STUB} Что отслеживать дальше по теме «{TAG_LABELS_RU[s.tag]}»",
+                    provenance=Provenance.AI_INFERENCE,
+                )
+                for s in matched[:1]
+            ],
+            relevance=round(min(1.0, sum(s.weight for s in matched) / 2), 2),
+            confidence=Level.LOW if data_gaps else Level.MEDIUM,
+            critic_passed=bool(positions) and bool(why),
+            critic_notes=critic_notes,
             trace_id=trace_id,
             created_at=datetime.now(UTC),
         )

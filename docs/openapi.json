@@ -2263,6 +2263,12 @@
             ],
             "title": "Product Hint",
             "description": "Bank product, if relevant"
+          },
+          "is_promo": {
+            "type": "boolean",
+            "title": "Is Promo",
+            "description": "Native bank offer, the UI marks it apart from AI conclusions",
+            "default": false
           }
         },
         "additionalProperties": false,
@@ -2299,6 +2305,11 @@
           "total_tokens": {
             "type": "integer",
             "title": "Total Tokens",
+            "default": 0
+          },
+          "total_cost_rub": {
+            "type": "number",
+            "title": "Total Cost Rub",
             "default": 0
           },
           "retries": {
@@ -2531,6 +2542,17 @@
               }
             ],
             "title": "Tokens Limit Today"
+          },
+          "cost_rub_today": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Rub Today"
           },
           "exhausted": {
             "type": "boolean",
@@ -3799,6 +3821,56 @@
             "title": "Data Gaps",
             "description": "What the agent could not find or verify"
           },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/Claim"
+            },
+            "type": "array",
+            "title": "Scenarios",
+            "description": "Factors to watch and questions for further analysis"
+          },
+          "relevance": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relevance"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Level"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "critic_passed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Critic Passed"
+          },
+          "critic_notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Critic Notes",
+            "description": "What the critic found and what was fixed"
+          },
           "trace_id": {
             "type": "string",
             "title": "Trace Id"
@@ -3880,6 +3952,16 @@
               }
             ],
             "title": "Error"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ErrorCode"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,
@@ -4388,6 +4470,34 @@
             "type": "string",
             "format": "date-time",
             "title": "Started At"
+          },
+          "retry_of": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retry Of",
+            "description": "Index of the step being redone"
+          },
+          "cost_rub": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Rub"
+          },
+          "cache_hit": {
+            "type": "boolean",
+            "title": "Cache Hit",
+            "default": false
           }
         },
         "additionalProperties": false,

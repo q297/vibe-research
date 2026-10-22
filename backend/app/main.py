@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,6 +8,15 @@ from app.api import router_v1
 from app.config import get_settings
 from app.context import TRACE_HEADER, TraceMiddleware
 from app.errors import install_error_handlers
+from app.services.registry import get_services
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    store = get_services().store
+    await store.load()
+    yield
+    await store.repo.close()
 
 
 def create_app() -> FastAPI:
@@ -17,6 +27,7 @@ def create_app() -> FastAPI:
         title="Alfa News Insights API",
         version=settings.app_version,
         description="BFF for the news analytics prototype. Mock mode serves synthetic fixtures",
+        lifespan=lifespan,
     )
     app.add_middleware(TraceMiddleware)
     app.add_middleware(

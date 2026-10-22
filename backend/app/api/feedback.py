@@ -24,5 +24,5 @@ async def post_feedback(body: FeedbackRequest, user: CurrentUser, svc: Svc) -> F
         trace_id=insight.trace_id,
         created_at=datetime.now(UTC),
     )
-    svc.store.feedback.append(feedback)
+    await svc.store.add_feedback(feedback)
     return feedback

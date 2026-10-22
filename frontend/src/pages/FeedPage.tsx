@@ -20,7 +20,7 @@ export function FeedPage() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
-      <section className="space-y-3 lg:col-span-2">
+      <section className="min-w-0 space-y-3 lg:col-span-2">
         <h1 className="text-xl font-semibold">Новости для вашего бизнеса</h1>
         {feed.isPending && <p className="text-slate-500">Загрузка…</p>}
         {feed.error && <ErrorBox error={feed.error} />}
@@ -29,7 +29,7 @@ export function FeedPage() {
         ))}
       </section>
 
-      <aside className="space-y-4">
+      <aside className="min-w-0 space-y-4">
         {profile.data && (
           <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm">
             <h2 className="font-medium">{profile.data.display_name}</h2>

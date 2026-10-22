@@ -8,6 +8,7 @@ from app.services.jobs import JobManager
 from app.services.ports import AgentPort, NewsPort, ProfilePort
 from app.services.rate_limit import RateLimiter
 from app.services.store import Store
+from app.services.warmup import Warmup
 
 
 @dataclass
@@ -18,6 +19,7 @@ class Services:
     store: Store
     jobs: JobManager
     limiter: RateLimiter = field(default_factory=RateLimiter)
+    warmup: Warmup = field(default_factory=Warmup)
 
 
 @lru_cache

@@ -5,7 +5,7 @@ import { ROLE_LABELS } from "../api/labels";
 import { useSession } from "../session";
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
-  `px-3 py-2 rounded-lg text-sm ${isActive ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"}`;
+  `whitespace-nowrap px-3 py-2 rounded-lg text-sm ${isActive ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"}`;
 
 export function Layout() {
   const { me, clientId, setClientId, role, setRole, logout } = useSession();
@@ -30,7 +30,7 @@ export function Layout() {
               прототип
             </span>
           </div>
-          <nav className="flex gap-1">
+          <nav className="order-last -mx-1 flex w-full gap-1 overflow-x-auto px-1 md:order-none md:w-auto">
             <NavLink to="/" end className={navClass}>
               Главная
             </NavLink>

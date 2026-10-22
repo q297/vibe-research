@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from app.api.deps import Cfg, Svc
 from app.auth import CurrentUser, authenticate, issue_token
@@ -20,9 +20,13 @@ async def health(settings: Cfg) -> Health:
 
 
 @router.post("/auth/login", response_model=Token)
-async def login(body: LoginRequest, settings: Cfg) -> Token:
+async def login(body: LoginRequest, request: Request, svc: Svc, settings: Cfg) -> Token:
+    # Only failures count and only per IP: a per-account lock would let anyone block "demo"
+    ip = request.client.host if request.client else "unknown"
+    svc.limiter.ensure_below(ip, "login_failure", settings.rate_limit_login_failures_per_hour)
     user = authenticate(body.username, body.password)
     if user is None:
+        svc.limiter.record(ip, "login_failure")
         raise AppError(401, ErrorCode.UNAUTHORIZED, "Wrong username or password")
     return Token(access_token=issue_token(user, settings))
 

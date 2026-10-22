@@ -62,6 +62,27 @@ class Budget(Contract):
     exhausted: bool = False
 
 
+class WarmupRequest(Contract):
+    """Precompute insights for demo clients so the live demo spends no budget"""
+
+    client_ids: list[str] | None = Field(default=None, description="All accessible if empty")
+    top: int = Field(default=5, ge=1, le=20, description="Top events of each client feed")
+    roles: list[UserRole] | None = Field(default=None, description="The user role if empty")
+    force: bool = Field(default=False, description="Recompute even fresh cached insights")
+
+
+class WarmupStatus(Contract):
+    running: bool = False
+    total: int = 0
+    computed: int = 0
+    skipped: int = 0
+    failed: int = 0
+    current: str | None = Field(default=None, description="client_id:event_id:role")
+    error: str | None = None
+    started_at: datetime | None = None
+    finished_at: datetime | None = None
+
+
 class Health(Contract):
     status: str
     mock_mode: bool

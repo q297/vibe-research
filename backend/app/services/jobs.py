@@ -128,6 +128,12 @@ class JobManager:
                 log.exception("job %s: failed to persist run", job.job_id)
             await self._notify(job.job_id)
 
+    async def wait_done(self, job_id: str) -> Job:
+        job = self._store.jobs[job_id]
+        while job.status not in (JobStatus.DONE, JobStatus.FAILED):
+            await self.wait_for_change(job_id, len(self._store.traces[job.trace_id].steps))
+        return job
+
     async def wait_for_change(self, job_id: str, seen_steps: int, timeout: float = 15) -> None:
         condition = self._conditions[job_id]
         job = self._store.jobs[job_id]

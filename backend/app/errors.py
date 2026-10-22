@@ -17,10 +17,13 @@ _STATUS_TO_CODE = {
     403: ErrorCode.FORBIDDEN,
     404: ErrorCode.NOT_FOUND,
     422: ErrorCode.BAD_REQUEST,
+    409: ErrorCode.BAD_REQUEST,
     429: ErrorCode.RATE_LIMITED,
 }
 
-ERROR_RESPONSES = {status: {"model": ApiError} for status in (400, 401, 403, 404, 429, 500, 503)}
+ERROR_RESPONSES = {
+    status: {"model": ApiError} for status in (400, 401, 403, 404, 409, 429, 500, 503)
+}
 
 
 class AppError(Exception):

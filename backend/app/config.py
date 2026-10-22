@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     rate_limit_runs_per_hour: int = 30
     rate_limit_chat_per_hour: int = 60
     rate_limit_ingest_per_hour: int = 10
+    rate_limit_login_failures_per_hour: int = 20
 
     daily_token_limit: int | None = None
     stub_step_delay_s: float = 0.4

@@ -15,12 +15,12 @@ export function HomePage() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
-      <section className="space-y-4 lg:col-span-2">
+      <section className="min-w-0 space-y-4 lg:col-span-2">
         {/* Permanent entry point on the main page (criterion 9) */}
         <div className="rounded-2xl bg-gradient-to-br from-brand to-brand-dark p-5 text-white shadow-sm">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Новости для вашего бизнеса</h2>
-            <Link to="/news" className="rounded-lg bg-white/15 px-3 py-1.5 text-sm hover:bg-white/25">
+            <Link to="/news" className="shrink-0 whitespace-nowrap rounded-lg bg-white/15 px-3 py-1.5 text-sm hover:bg-white/25">
               Все новости →
             </Link>
           </div>
@@ -54,7 +54,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <aside className="space-y-3">
+      <aside className="min-w-0 space-y-3">
         {ACCOUNTS.map((a) => (
           <div key={a.name} className="rounded-2xl border border-slate-200 bg-white p-4">
             <div className="text-sm text-slate-500">{a.name}</div>

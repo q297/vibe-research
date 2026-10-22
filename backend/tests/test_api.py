@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from app.contracts.insights import Insight, TraceStep
@@ -136,6 +137,27 @@ async def test_chat_and_feedback(client, login):
     assert metrics["feedback_up"] == 1 and metrics["insights_total"] == 1
 
 
+async def test_login_failures_are_limited_per_ip(client, monkeypatch):
+    monkeypatch.setenv("RATE_LIMIT_LOGIN_FAILURES_PER_HOUR", "2")
+    from app.config import get_settings
+
+    get_settings.cache_clear()
+    bad = {"username": "demo", "password": "wrong"}
+    for _ in range(2):
+        assert (await client.post("/v1/auth/login", json=bad)).status_code == 401
+    resp = await client.post("/v1/auth/login", json=bad)
+    assert resp.status_code == 429 and resp.json()["code"] == "rate_limited"
+
+
+async def test_successful_logins_are_not_limited(client, login, monkeypatch):
+    monkeypatch.setenv("RATE_LIMIT_LOGIN_FAILURES_PER_HOUR", "1")
+    from app.config import get_settings
+
+    get_settings.cache_clear()
+    for _ in range(3):
+        await login("demo")
+
+
 async def test_metrics_only_for_demo_admin(client, login):
     resp = await client.get("/v1/metrics", headers=await login("cfo.a"))
     assert resp.status_code == 403
@@ -176,3 +198,33 @@ async def test_rate_limit(client, login, monkeypatch):
     assert (await client.post(url, json={"message": "1"}, headers=headers)).status_code == 200
     resp = await client.post(url, json={"message": "2"}, headers=headers)
     assert resp.status_code == 429 and resp.json()["code"] == "rate_limited"
+
+
+async def _wait_warmup(client, headers):
+    for _ in range(200):
+        status = (await client.get("/v1/admin/warm-cache", headers=headers)).json()
+        if not status["running"]:
+            return status
+        await asyncio.sleep(0.01)
+    raise AssertionError("warm-up did not finish")
+
+
+async def test_warm_cache_computes_then_skips(client, login):
+    headers = await login("demo")
+    body = {"client_ids": ["c-001", "c-002"], "top": 2, "roles": ["cfo", "ceo"]}
+    resp = await client.post("/v1/admin/warm-cache", json=body, headers=headers)
+    assert resp.status_code == 202
+    first = await _wait_warmup(client, headers)
+    assert first["total"] == 8 and first["computed"] == 8 and first["failed"] == 0
+
+    feed = (await client.get("/v1/clients/c-001/feed?limit=2&role=ceo", headers=headers)).json()
+    assert {i["insight_status"] for i in feed["items"]} == {"ready"}
+
+    await client.post("/v1/admin/warm-cache", json=body, headers=headers)
+    second = await _wait_warmup(client, headers)
+    assert second["skipped"] == 8 and second["computed"] == 0
+
+
+async def test_warm_cache_is_admin_only(client, login):
+    resp = await client.post("/v1/admin/warm-cache", json={}, headers=await login("cfo.a"))
+    assert resp.status_code == 403

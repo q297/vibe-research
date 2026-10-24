@@ -1,0 +1,16 @@
+# SITE_ADDRESS is a domain, e.g. news.example.ru or 203.0.113.10.sslip.io;
+# Caddy gets and renews the Let's Encrypt certificate for it by itself
+{$SITE_ADDRESS} {
+	reverse_proxy web:80 {
+		# Agent steps come over SSE, send each event right away
+		flush_interval -1
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}

@@ -24,7 +24,7 @@ async def login(body: LoginRequest, request: Request, svc: Svc, settings: Cfg) -
     # Only failures count and only per IP: a per-account lock would let anyone block "demo"
     ip = request.client.host if request.client else "unknown"
     svc.limiter.ensure_below(ip, "login_failure", settings.rate_limit_login_failures_per_hour)
-    user = authenticate(body.username, body.password)
+    user = authenticate(body.username, body.password, settings)
     if user is None:
         svc.limiter.record(ip, "login_failure")
         raise AppError(401, ErrorCode.UNAUTHORIZED, "Wrong username or password")

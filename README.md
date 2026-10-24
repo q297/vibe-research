@@ -23,6 +23,8 @@ docker compose up --build
 
 Интерфейс: http://localhost:8080, Swagger: http://localhost:8080/api/docs
 
+Публичный стенд с HTTPS: [docs/deploy.md](docs/deploy.md).
+
 ## Локальная разработка
 
 Нужны [uv](https://docs.astral.sh/uv/) и Node.js 24.
@@ -61,5 +63,5 @@ make test
 ## Перед демо
 
 1. Войти как `demo`, открыть «Качество» и нажать «Подготовить инсайты». Инсайты для верхних новостей каждой компании построятся заранее и сохранятся в Postgres, повторный запуск пропускает готовые. Так на показе бюджет LLM тратится только на «Свою новость».
-2. Сменить пароли демо-учёток в `backend/app/stubs/fixtures/users.json` и задать `JWT_SECRET` в `.env`.
+2. Задать в `.env` общий пароль демо-учёток `DEMO_PASSWORD` и `JWT_SECRET`.
 3. Вход ограничен: после `RATE_LIMIT_LOGIN_FAILURES_PER_HOUR` неудачных попыток (по умолчанию 20) с одного IP новые попытки отклоняются на час.

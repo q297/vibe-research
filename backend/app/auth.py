@@ -36,9 +36,14 @@ _USERS_BY_ID = {u.user_id: u for u in _USERS.values()}
 _bearer = HTTPBearer(auto_error=False)
 
 
-def authenticate(username: str, password: str) -> UserRecord | None:
+def authenticate(username: str, password: str, settings: Settings) -> UserRecord | None:
     user = _USERS.get(username)
-    if user and hmac.compare_digest(user.password, password):
+    if user is None:
+        return None
+    # DEMO_PASSWORD replaces the fixture passwords on a public stand without code changes
+    expected = settings.demo_password or user.password
+    # Bytes, because compare_digest rejects non-ASCII str (a Cyrillic password gave a 500)
+    if hmac.compare_digest(expected.encode(), password.encode()):
         return user
     return None
 

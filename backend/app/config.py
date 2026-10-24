@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     # Empty means a random per-process secret, tokens die on restart
     jwt_secret: str = Field(default_factory=lambda: secrets.token_urlsafe(32))
     jwt_ttl_minutes: int = 12 * 60
+    # One password for all demo accounts, overrides users.json when set
+    demo_password: str | None = None
     cors_origins: list[str] = ["http://localhost:5173"]
 
     # Per-user limits that protect the shared LLM budget on a public stand (E7)

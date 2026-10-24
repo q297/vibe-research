@@ -2,6 +2,7 @@ import asyncio
 import json
 
 from app.contracts.insights import Insight, TraceStep
+from tests.conftest import USERS
 
 
 async def test_health_is_public(client):
@@ -228,3 +229,22 @@ async def test_warm_cache_computes_then_skips(client, login):
 async def test_warm_cache_is_admin_only(client, login):
     resp = await client.post("/v1/admin/warm-cache", json={}, headers=await login("cfo.a"))
     assert resp.status_code == 403
+
+
+async def test_demo_password_overrides_fixture(client, monkeypatch):
+    monkeypatch.setenv("DEMO_PASSWORD", "stand-secret")
+    from app.config import get_settings
+
+    get_settings.cache_clear()
+    fixture_password = USERS["demo"]["password"]
+    old = await client.post(
+        "/v1/auth/login", json={"username": "demo", "password": fixture_password}
+    )
+    assert old.status_code == 401
+    new = await client.post("/v1/auth/login", json={"username": "demo", "password": "stand-secret"})
+    assert new.status_code == 200
+
+
+async def test_non_ascii_password_is_rejected_not_crashing(client):
+    resp = await client.post("/v1/auth/login", json={"username": "demo", "password": "пароль"})
+    assert resp.status_code == 401
